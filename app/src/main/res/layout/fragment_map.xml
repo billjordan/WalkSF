@@ -4,11 +4,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="test button"
-        android:id="@+id/test_button"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/add_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADD START"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/add_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADD END"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/calc_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CALC PATH"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
     <com.mapquest.android.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/map"
