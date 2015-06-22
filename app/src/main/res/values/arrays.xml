@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="addNodeDialogOptions">
+        <item>Start Intersection</item>
+        <item>End Intersection</item>
+    </string-array>
+</resources>

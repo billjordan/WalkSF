@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.mapquest.android.maps.AnnotationView;
-import com.mapquest.android.maps.DefaultItemizedOverlay;
 import com.mapquest.android.maps.GeoPoint;
 import com.mapquest.android.maps.ItemizedOverlay;
 import com.mapquest.android.maps.MapView;
@@ -20,7 +19,7 @@ import com.mapquest.android.maps.OverlayItem;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements AddNodeDialogFragment.NoticeDialogListener{
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -29,8 +28,10 @@ public class MapFragment extends Fragment {
     private Button addStart;
     private Button addEnd;
     private Button calcPath;
-    private MapView map;
+    private MyMapView mapView;
     private AnnotationView annotation;
+    private TerminalNodesOverlay terminalNodesOverlay;
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -52,15 +53,15 @@ public class MapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        //initialize map
+        //initialize mapView
         // set the zoom level, center point and enable the default zoom controls
-        map = (MapView) rootView.findViewById(R.id.map);
-        map.getController().setZoom(12);
-        map.getController().setCenter(new GeoPoint(37.761078, -122.446142));
-        map.setBuiltInZoomControls(true);
+        mapView = (MyMapView) rootView.findViewById(R.id.map);
+        mapView.getController().setZoom(12);
+        mapView.getController().setCenter(new GeoPoint(37.761078, -122.446142));
+        mapView.setBuiltInZoomControls(true);
 
         // initialize the annotation to be shown later
-        annotation = new AnnotationView(map);
+        annotation = new AnnotationView(mapView);
 
         //initialize the buttons
         addStart = (Button) rootView.findViewById(R.id.add_start);
@@ -87,27 +88,35 @@ public class MapFragment extends Fragment {
         // use a custom POI marker by referencing the bitmap file directly,
 
         // using the filename as the resource ID
-        Drawable start_marker = getResources().getDrawable(R.mipmap.ic_start_marker);
-        final DefaultItemizedOverlay poiOverlay = new DefaultItemizedOverlay(start_marker);
+        Drawable startMarker = getResources().getDrawable(R.mipmap.ic_start_marker);
+        Drawable endMarker = getResources().getDrawable(R.mipmap.ic_end_marker);
+        //Not sure why I only need to do this for second marker
+        endMarker.setBounds(
+                0 - endMarker.getIntrinsicWidth() / 2, 0 - endMarker.getIntrinsicHeight(),
+                endMarker.getIntrinsicWidth() / 2, 0);
+
+        terminalNodesOverlay = new TerminalNodesOverlay(startMarker, endMarker);
 
         // set GeoPoints and title/snippet to be used in the annotation view
-        OverlayItem poi =  new OverlayItem(new GeoPoint(37.761078, -122.446142), "TITLE", "subtitle");
-        poiOverlay.addItem(poi);
+//        OverlayItem poi =  new OverlayItem(new GeoPoint(37.761078, -122.446142), "TITLE", "subtitle");
+//        terminalNodesOverlay.addItem(poi);
+
+//        terminalNodesOverlay.addStartNode(new GeoPoint(37.765045, -122.419761), "16th and mission");
+//        terminalNodesOverlay.addEndNode(new GeoPoint(37.779270, -122.503136), "42 and geary");
 
         // add a tap listener for the POI overlay
-        poiOverlay.setTapListener(new ItemizedOverlay.OverlayTapListener() {
+        terminalNodesOverlay.setTapListener(new ItemizedOverlay.OverlayTapListener() {
             @Override
             public void onTap(GeoPoint pt, MapView mapView) {
                 // when tapped, show the annotation for the overlayItem
-                int lastTouchedIndex = poiOverlay.getLastFocusedIndex();
-                if(lastTouchedIndex>-1){
-                    OverlayItem tapped = poiOverlay.getItem(lastTouchedIndex);
+                int lastTouchedIndex = terminalNodesOverlay.getLastFocusedIndex();
+                if (lastTouchedIndex > -1) {
+                    OverlayItem tapped = terminalNodesOverlay.getItem(lastTouchedIndex);
                     annotation.showAnnotationView(tapped);
                 }
             }
         });
-
-        map.getOverlays().add(poiOverlay);
+        mapView.getOverlays().add(terminalNodesOverlay);
         return rootView;
     }
 
@@ -122,5 +131,33 @@ public class MapFragment extends Fragment {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
+    }
+
+    /**
+     * Adds a terminal node
+     * <p>
+     *     Displays dialog to user to choose start or end node for geopoint
+     *     If user selects node and presses ok result is handled by onDialogPositiveClick
+     *     nothing happens on cancel
+     * </p>
+     * @param geoPoint
+     */
+    public void addNode(GeoPoint geoPoint) {
+        AddNodeDialogFragment addNodeDialogFragment = new AddNodeDialogFragment();
+//        addNodeDialogFragment.setIntersectionString("Example Haight & Ashburry");
+        addNodeDialogFragment.setIntersectionGeoPoint(geoPoint);
+        addNodeDialogFragment.show(getFragmentManager(), null);
+    }
+
+    @Override
+    public void onDialogPositiveClick(AddNodeDialogResult result) {
+        if(result.isStart()) {
+            terminalNodesOverlay.addStartNode(result.getLocation(), "input by clicking");
+        }else if(result.isEnd()){
+            terminalNodesOverlay.addEndNode(result.getLocation(), "input by clicking");
+        }
+
+        //postInvalidate() updates the map and redraws the overlays
+        mapView.postInvalidate();
     }
 }
