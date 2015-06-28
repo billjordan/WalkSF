@@ -128,18 +128,22 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
 
 
         //read in intersectionCollection
-         try {
-//            InputStream is = getResources().getAssets().open("intersectionCollection.ser");
-            InputStream fileInputStream = getActivity().getAssets().open("intersectionCollection.ser");
-            ObjectInputStream intersectionsInputStream = new ObjectInputStream(fileInputStream);
-            intersectionCollection = (IntersectionCollection) intersectionsInputStream.readObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        readIntersectionCollection();
 
         return rootView;
+    }
+
+    private void readIntersectionCollection() {
+        try {
+//            InputStream is = getResources().getAssets().open("intersectionCollection.ser");
+           InputStream fileInputStream = getActivity().getAssets().open("intersectionCollection.ser");
+           ObjectInputStream intersectionsInputStream = new ObjectInputStream(fileInputStream);
+           intersectionCollection = (IntersectionCollection) intersectionsInputStream.readObject();
+       } catch (IOException e) {
+           e.printStackTrace();
+       } catch (ClassNotFoundException e) {
+           e.printStackTrace();
+       }
     }
 
 
