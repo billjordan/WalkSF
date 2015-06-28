@@ -16,6 +16,7 @@ import com.mapquest.android.maps.ItemizedOverlay;
 import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.OverlayItem;
 
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -117,6 +118,8 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
             }
         });
         mapView.getOverlays().add(terminalNodesOverlay);
+
+
         return rootView;
     }
 
