@@ -18,17 +18,30 @@ import javax.xml.transform.Result;
 public class AddNodeDialogFragment extends android.support.v4.app.DialogFragment {
 
 
-    private String intersectionString;
+//    private String intersectionString;
     private String choice;
     private AddNodeDialogResult result;
+    private Intersection intersection;
 
-    public void setIntersectionGeoPoint(GeoPoint intersectionGeoPoint) {
-        this.intersectionGeoPoint = intersectionGeoPoint;
-        setIntersectionString(this.intersectionGeoPoint.toString());
-        result.setLocation(intersectionGeoPoint);
+    public Intersection getIntersection() {
+        return intersection;
     }
 
-    private GeoPoint intersectionGeoPoint;
+    public void setIntersection(Intersection intersection) {
+        this.intersection = intersection;
+        result.setIntersection(intersection);
+//        setIntersectionGeoPoint(new GeoPoint(intersection.getLatitude(), intersection.getLongitude()));
+//        setIntersectionString(intersection.getDescription());
+    }
+
+
+//    public void setIntersectionGeoPoint(GeoPoint intersectionGeoPoint) {
+//        this.intersectionGeoPoint = intersectionGeoPoint;
+//        setIntersectionString(this.intersectionGeoPoint.toString());
+////        result.setLocation(intersectionGeoPoint);
+//    }
+
+//    private GeoPoint intersectionGeoPoint;
 
     // Use this instance of the interface to deliver action events
     private NoticeDialogListener mListener;
@@ -37,7 +50,8 @@ public class AddNodeDialogFragment extends android.support.v4.app.DialogFragment
 
     public AddNodeDialogFragment() {
         super();
-        intersectionString = null;
+//        intersectionString = null;
+        intersection = null;
         result = new AddNodeDialogResult();
     }
 
@@ -48,12 +62,12 @@ public class AddNodeDialogFragment extends android.support.v4.app.DialogFragment
         final String[] choices = {"Start Intersection", "End Intersection"};
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        if (intersectionString == null){
+        if (intersection == null){
             throw new IllegalStateException("The intersectionString must be set before showing this " +
                     "dialog. Call setIntersectionString()");
         }
 //        builder.setMessage(intersectionString)
-        builder.setTitle(intersectionString)
+        builder.setTitle(intersection.getDescription())
                 // Specify the list array, the items to be selected by default (null for none),
                 // and the listener through which to receive callbacks when items are selected
                 .setSingleChoiceItems(choices, -1,
@@ -97,9 +111,9 @@ public class AddNodeDialogFragment extends android.support.v4.app.DialogFragment
         return alertDialog;
     }
 
-    public void setIntersectionString(String intersectionString) {
-        this.intersectionString = intersectionString;
-    }
+//    public void setIntersectionString(String intersectionString) {
+//        this.intersectionString = intersectionString;
+//    }
 
     public interface NoticeDialogListener {
         public void onDialogPositiveClick(AddNodeDialogResult result);

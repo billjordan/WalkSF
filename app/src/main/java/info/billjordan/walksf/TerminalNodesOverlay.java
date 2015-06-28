@@ -22,6 +22,9 @@ public class TerminalNodesOverlay extends DefaultItemizedOverlay{
     private boolean endNodeSet;
     private OverlayItem startNode;
     private OverlayItem endNode;
+    private Intersection startIntersection;
+    private Intersection endIntersection;
+
 
 //    public TerminalNodesOverlay(Drawable defaultMarker) {
 //        super(defaultMarker);
@@ -83,6 +86,65 @@ public class TerminalNodesOverlay extends DefaultItemizedOverlay{
         this.addItem(startNode);
         startNodeSet = true;
     }
+
+
+
+    /**
+     * Adds or replaces start node
+     * @param intersection Intersection for startNode
+     */
+    public void addStartNode(Intersection intersection){
+
+        //remove all nodes
+        //add endNode back if it is set
+        //add startNode
+        this.clear();
+
+        if(endNodeSet){
+            this.addItem(endNode);
+        }
+
+        startNode = new OverlayItem(
+                new GeoPoint(intersection.getLatitude(), intersection.getLongitude()),
+                "Starting Intersection",
+                intersection.getDescription()
+        );
+        startNode.setMarker(startMarker);
+        this.addItem(startNode);
+        startIntersection = intersection;
+        startNodeSet = true;
+    }
+
+
+
+
+    /**
+     * Adds or replaces start node
+     * @param intersection Intersection for startNode
+     */
+    public void addEndNode(Intersection intersection){
+
+        //remove all nodes
+        //add startNode back if it is set
+        //add endNode
+        this.clear();
+
+        if(startNodeSet){
+            this.addItem(startNode);
+        }
+
+        endNode = new OverlayItem(
+                new GeoPoint(intersection.getLatitude(), intersection.getLongitude()),
+                "Ending Intersection",
+                intersection.getDescription()
+        );
+        endNode.setMarker(endMarker);
+        this.addItem(endNode);
+        endIntersection = intersection;
+        endNodeSet = true;
+    }
+
+
 
     /**
      * Adds or replaces end node

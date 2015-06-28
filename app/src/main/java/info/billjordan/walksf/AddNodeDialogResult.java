@@ -11,6 +11,17 @@ public class AddNodeDialogResult {
     private GeoPoint location;
     private int terminus;
 
+    public Intersection getIntersection() {
+        return intersection;
+    }
+
+    public void setIntersection(Intersection intersection) {
+        this.intersection = intersection;
+        this.location = new GeoPoint(intersection.getLatitude(), intersection.getLongitude());
+    }
+
+    private Intersection intersection;
+
     /**
      * 0 defines this as a start node, 1 as and end node
      * @param terminus
@@ -33,6 +44,8 @@ public class AddNodeDialogResult {
     public void setLocation(GeoPoint location) {
         this.location = location;
     }
+
+
 
 
     public boolean isStart(){

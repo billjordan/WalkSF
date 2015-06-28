@@ -120,6 +120,15 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
                 int lastTouchedIndex = terminalNodesOverlay.getLastFocusedIndex();
                 if (lastTouchedIndex > -1) {
                     OverlayItem tapped = terminalNodesOverlay.getItem(lastTouchedIndex);
+                    annotation.setScaleX((float)(.5));
+                    annotation.setScaleY((float) (.5));
+                    annotation.setClickable(true);
+                    annotation.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            annotation.hide();
+                        }
+                    });
                     annotation.showAnnotationView(tapped);
                 }
             }
@@ -171,19 +180,22 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
     public void addNode(GeoPoint geoPoint) {
         AddNodeDialogFragment addNodeDialogFragment = new AddNodeDialogFragment();
 //        addNodeDialogFragment.setIntersectionString("Example Haight & Ashburry");
-        addNodeDialogFragment.setIntersectionGeoPoint(geoPoint);
-        String intersectionDescription =
-                intersectionCollection.getClosestIntersection(geoPoint.getLatitude(), geoPoint.getLongitude()).getDescription();
-        addNodeDialogFragment.setIntersectionString(intersectionDescription);
+//        addNodeDialogFragment.setIntersectionGeoPoint(geoPoint);
+        Intersection closestIntersection =
+                intersectionCollection.getClosestIntersection(geoPoint.getLatitude(), geoPoint.getLongitude());
+//        String intersectionDescription =
+//                intersectionCollection.getClosestIntersection(geoPoint.getLatitude(), geoPoint.getLongitude()).getDescription();
+//        addNodeDialogFragment.setIntersectionString(closestIntersection.getDescription());
+        addNodeDialogFragment.setIntersection(closestIntersection);
         addNodeDialogFragment.show(getFragmentManager(), null);
     }
 
     @Override
     public void onDialogPositiveClick(AddNodeDialogResult result) {
         if(result.isStart()) {
-            terminalNodesOverlay.addStartNode(result.getLocation(), "input by clicking");
+            terminalNodesOverlay.addStartNode(result.getIntersection());
         }else if(result.isEnd()){
-            terminalNodesOverlay.addEndNode(result.getLocation(), "input by clicking");
+            terminalNodesOverlay.addEndNode(result.getIntersection());
         }
 
         //postInvalidate() updates the map and redraws the overlays
