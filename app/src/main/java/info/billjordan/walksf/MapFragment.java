@@ -16,6 +16,12 @@ import com.mapquest.android.maps.ItemizedOverlay;
 import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.OverlayItem;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -32,6 +38,7 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
     private MyMapView mapView;
     private AnnotationView annotation;
     private TerminalNodesOverlay terminalNodesOverlay;
+    private IntersectionCollection intersectionCollection;
 
 
     /**
@@ -120,6 +127,18 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
         mapView.getOverlays().add(terminalNodesOverlay);
 
 
+        //read in intersectionCollection
+         try {
+//            InputStream is = getResources().getAssets().open("intersectionCollection.ser");
+            InputStream fileInputStream = getActivity().getAssets().open("intersectionCollection.ser");
+            ObjectInputStream intersectionsInputStream = new ObjectInputStream(fileInputStream);
+            intersectionCollection = (IntersectionCollection) intersectionsInputStream.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         return rootView;
     }
 
@@ -149,6 +168,9 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
         AddNodeDialogFragment addNodeDialogFragment = new AddNodeDialogFragment();
 //        addNodeDialogFragment.setIntersectionString("Example Haight & Ashburry");
         addNodeDialogFragment.setIntersectionGeoPoint(geoPoint);
+        String intersectionDescription =
+                intersectionCollection.getClosestIntersection(geoPoint.getLatitude(), geoPoint.getLongitude()).getDescription();
+        addNodeDialogFragment.setIntersectionString(intersectionDescription);
         addNodeDialogFragment.show(getFragmentManager(), null);
     }
 
