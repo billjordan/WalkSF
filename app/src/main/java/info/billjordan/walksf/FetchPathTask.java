@@ -50,7 +50,7 @@ public class FetchPathTask extends AsyncTask {
             // Construct the URL for the query
             // http://www.billjordan.info/php/calcPath.php?data[]=startCNN&data[]=endCNN
             // http://localhost:8080/walksf/least_work/27147000/24336000/
-            String urlStr = String.format("http://192.168.1.127:8080/walksf/least_work/%1$d/%2$d/", startCnn, endCnn);
+            String urlStr = String.format("http://www.billjordan.info:8080/walksf/least_work/%1$d/%2$d/", startCnn, endCnn);
             URL url = new URL(urlStr);
 
             // Create the request to OpenWeatherMap, and open the connection
