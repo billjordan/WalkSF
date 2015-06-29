@@ -1,5 +1,6 @@
 package info.billjordan.walksf;
 
+import android.app.Fragment;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,6 +22,18 @@ import java.util.ArrayList;
  * Created by bill on 6/28/15.
  */
 public class FetchPathTask extends AsyncTask {
+
+    private MapFragment mapFragment;
+    private int startCnn;
+    private int endCnn;
+
+
+    public FetchPathTask(MapFragment mapFragment, int startCnn, int endCnn){
+        this.mapFragment = mapFragment;
+        this.startCnn = startCnn;
+        this.endCnn = endCnn;
+    }
+
     @Override
     protected Object doInBackground(Object[] objects) {
 
@@ -37,7 +50,8 @@ public class FetchPathTask extends AsyncTask {
             // Construct the URL for the query
             // http://www.billjordan.info/php/calcPath.php?data[]=startCNN&data[]=endCNN
             // http://localhost:8080/walksf/least_work/27147000/24336000/
-            URL url = new URL("http://192.168.1.127:8080/walksf/least_work/27147000/24336000/");
+            String urlStr = String.format("http://192.168.1.127:8080/walksf/least_work/%1$d/%2$d/", startCnn, endCnn);
+            URL url = new URL(urlStr);
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -104,5 +118,12 @@ public class FetchPathTask extends AsyncTask {
             }
         }
         return path;
+    }
+
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        //add path to map
+        mapFragment.addPath((ArrayList<Integer>)o);
     }
 }
