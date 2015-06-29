@@ -191,4 +191,15 @@ public class TerminalNodesOverlay extends DefaultItemizedOverlay{
 //        startNodeSet = false;
 //        endNodeSet = false;
 //    }
+
+    public void removeNodes(){
+        //removes all nodes but leaves markers
+        startNodeSet = false;
+        endNodeSet = false;
+        startNode = null;
+        endNode = null;
+        startIntersection = null;
+        endIntersection = null;
+        this.clear();
+    }
 }

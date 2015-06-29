@@ -11,23 +11,23 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/add_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ADD START"
+            android:id="@+id/compare_google"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="COMPARE TO GOOGLE MAPS"
             android:layout_weight="1"/>
 
         <Button
-            android:id="@+id/add_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ADD END"
+            android:id="@+id/clear_map"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="CLEAR MAP"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/calc_path"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CALC PATH"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="GET PATH"
             android:layout_weight="1"/>
     </LinearLayout>
 

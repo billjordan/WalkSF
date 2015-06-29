@@ -1,10 +1,11 @@
 package info.billjordan.walksf;
 
 import android.app.Activity;
-import android.graphics.Canvas;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,17 +19,12 @@ import com.mapquest.android.maps.GeoPoint;
 import com.mapquest.android.maps.ItemizedOverlay;
 import com.mapquest.android.maps.LineOverlay;
 import com.mapquest.android.maps.MapView;
+import com.mapquest.android.maps.Overlay;
 import com.mapquest.android.maps.OverlayItem;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -42,14 +38,14 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private Button addStart;
-    private Button addEnd;
-    private Button calcPath;
+    private Button compareToGoogleButton;
+    private Button clearMapButton;
+    private Button calcPathButton;
     private MyMapView mapView;
     private AnnotationView annotation;
     private TerminalNodesOverlay terminalNodesOverlay;
     private IntersectionCollection intersectionCollection;
-    private MapFragment thisFragemnt;
+    private MapFragment thisFragment;
 
     private LineOverlay lineOverlay;
 
@@ -72,7 +68,7 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        thisFragemnt = this;
+        thisFragment = this;
         //initialize mapView
         // set the zoom level, center point and enable the default zoom controls
         mapView = (MyMapView) rootView.findViewById(R.id.map);
@@ -84,37 +80,69 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
         annotation = new AnnotationView(mapView);
 
         //initialize the buttons
-        addStart = (Button) rootView.findViewById(R.id.add_start);
-        addEnd = (Button) rootView.findViewById(R.id.add_end);
-        calcPath = (Button) rootView.findViewById(R.id.calc_path);
-        addStart.setOnClickListener(new View.OnClickListener() {
+        compareToGoogleButton = (Button) rootView.findViewById(R.id.compare_google);
+        clearMapButton = (Button) rootView.findViewById(R.id.clear_map);
+        calcPathButton = (Button) rootView.findViewById(R.id.calc_path);
+        compareToGoogleButton.setOnClickListener(new View.OnClickListener() {
+            //if start and end nodes are set open google maps with intent
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "add start", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "add start", Toast.LENGTH_SHORT).show();
+                boolean startNodeSet = terminalNodesOverlay.isStartNodeSet();
+                boolean endNodeSet = terminalNodesOverlay.isEndNodeSet();
+                if (!startNodeSet && !endNodeSet) {
+                    Toast.makeText(getActivity(), "Set the starting and ending locations by long-clicking.", Toast.LENGTH_SHORT).show();
+                } else if (!startNodeSet) {
+                    Toast.makeText(getActivity(), "Set the starting location.", Toast.LENGTH_SHORT).show();
+                } else if (!endNodeSet) {
+                    Toast.makeText(getActivity(), "Set the ending location.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intersection startIntersection = terminalNodesOverlay.getStartIntersection();
+                    Intersection endIntersection = terminalNodesOverlay.getEndIntersection();
+                    String gMapsURL = "http://maps.google.com/maps/?saddr="
+                            + startIntersection.getLatitude()
+                            + ","
+                            + startIntersection.getLongitude()
+                            + "&daddr="
+                            + endIntersection.getLatitude()
+                            + ","
+                            + endIntersection.getLongitude()
+                            + "&dirflg=w";
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(gMapsURL));
+                    startActivity(browserIntent);
+                }
             }
         });
-        addEnd.setOnClickListener(new View.OnClickListener() {
+        clearMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "add end", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "add end", Toast.LENGTH_SHORT).show();
+                terminalNodesOverlay.removeNodes();
+                removePaths();  //remove Paths redraws the map
             }
         });
-        calcPath.setOnClickListener(new View.OnClickListener() {
+        calcPathButton.setOnClickListener(new View.OnClickListener() {
+            //if start and end nodes are set get path from api server and add it to map
             @Override
             public void onClick(View v) {
 //                Toast.makeText(getActivity(), "calc path", Toast.LENGTH_SHORT).show();
 //                fetchPath(terminalNodesOverlay.getStartIntersection(), terminalNodesOverlay.getEndIntersection());
+
+                //if there is already a path on the map, remove it
+                removePaths();
+
+
                 boolean startNodeSet = terminalNodesOverlay.isStartNodeSet();
                 boolean endNodeSet = terminalNodesOverlay.isEndNodeSet();
-                if(!startNodeSet && !endNodeSet){
-                    Toast.makeText(getActivity(), "Set the starting and ending locations by long-clicking.", Toast.LENGTH_LONG).show();
-                } else if(!startNodeSet){
-                    Toast.makeText(getActivity(), "Set the starting location.", Toast.LENGTH_LONG).show();
-                } else if(!endNodeSet){
-                    Toast.makeText(getActivity(), "Set the ending location,", Toast.LENGTH_LONG).show();
+                if (!startNodeSet && !endNodeSet) {
+                    Toast.makeText(getActivity(), "Set the starting and ending locations by long-clicking.", Toast.LENGTH_SHORT).show();
+                } else if (!startNodeSet) {
+                    Toast.makeText(getActivity(), "Set the starting location.", Toast.LENGTH_SHORT).show();
+                } else if (!endNodeSet) {
+                    Toast.makeText(getActivity(), "Set the ending location.", Toast.LENGTH_SHORT).show();
                 } else {
                     new FetchPathTask(
-                            thisFragemnt,
+                            thisFragment,
                             terminalNodesOverlay.getStartIntersection().getCnn(),
                             terminalNodesOverlay.getEndIntersection().getCnn()
                     ).execute();
@@ -169,6 +197,15 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
 
 //        addPath();
         return rootView;
+    }
+
+    private void removePaths() {
+        //remove all lineOverlays
+        while(mapView.getOverlays().remove(lineOverlay)){
+            String pass = "do nothing";
+        }
+        //redraw map
+        mapView.postInvalidate();
     }
 
     public void addPath(ArrayList<Integer> path) {
