@@ -26,6 +26,17 @@ public class TerminalNodesOverlay extends DefaultItemizedOverlay{
     private Intersection endIntersection;
 
 
+    public Intersection getStartIntersection() {
+        return startIntersection;
+    }
+
+
+    public Intersection getEndIntersection() {
+        return endIntersection;
+    }
+
+
+
 //    public TerminalNodesOverlay(Drawable defaultMarker) {
 //        super(defaultMarker);
 //    }

@@ -16,11 +16,16 @@ import com.mapquest.android.maps.ItemizedOverlay;
 import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.OverlayItem;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 
 /**
@@ -91,6 +96,8 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "calc path", Toast.LENGTH_SHORT).show();
+//                fetchPath(terminalNodesOverlay.getStartIntersection(), terminalNodesOverlay.getEndIntersection());
+                ArrayList<Integer> path = (ArrayList<Integer>) (new FetchPathTask().execute());
             }
         });
         // use a custom POI marker by referencing the bitmap file directly,
@@ -201,4 +208,6 @@ public class MapFragment extends Fragment implements AddNodeDialogFragment.Notic
         //postInvalidate() updates the map and redraws the overlays
         mapView.postInvalidate();
     }
+
+
 }
