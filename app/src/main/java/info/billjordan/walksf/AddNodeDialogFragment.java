@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.v7.app.ActionBarActivity;
 
-import com.mapquest.android.maps.GeoPoint;
 
-import javax.xml.transform.Result;
 
 /**
  * Created by bill on 6/21/15.
@@ -30,18 +28,9 @@ public class AddNodeDialogFragment extends android.support.v4.app.DialogFragment
     public void setIntersection(Intersection intersection) {
         this.intersection = intersection;
         result.setIntersection(intersection);
-//        setIntersectionGeoPoint(new GeoPoint(intersection.getLatitude(), intersection.getLongitude()));
-//        setIntersectionString(intersection.getDescription());
     }
 
 
-//    public void setIntersectionGeoPoint(GeoPoint intersectionGeoPoint) {
-//        this.intersectionGeoPoint = intersectionGeoPoint;
-//        setIntersectionString(this.intersectionGeoPoint.toString());
-////        result.setLocation(intersectionGeoPoint);
-//    }
-
-//    private GeoPoint intersectionGeoPoint;
 
     // Use this instance of the interface to deliver action events
     private NoticeDialogListener mListener;

@@ -1,6 +1,5 @@
 package info.billjordan.walksf;
 
-import android.app.Fragment;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -8,12 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,7 +45,6 @@ public class FetchPathTask extends AsyncTask {
 
         try {
             // Construct the URL for the query
-            // http://www.billjordan.info/php/calcPath.php?data[]=startCNN&data[]=endCNN
             // http://localhost:8080/walksf/least_work/27147000/24336000/
             String urlStr = String.format("http://www.billjordan.info:8080/walksf/least_work/%1$d/%2$d/", startCnn, endCnn);
             URL url = new URL(urlStr);
@@ -98,8 +94,6 @@ public class FetchPathTask extends AsyncTask {
             }
             //remove start and end brackets
 
-//            String[] cnnStrings = path.split(",");
-//            forecastJsonStr = buffer.toString();
         } catch (IOException e) {
             Log.e("PlaceholderFragment", "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping

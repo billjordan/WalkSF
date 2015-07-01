@@ -1,12 +1,9 @@
 package info.billjordan.walksf;
 
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.mapquest.android.maps.DefaultItemizedOverlay;
 import com.mapquest.android.maps.GeoPoint;
-import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.OverlayItem;
 
 import java.io.Console;
@@ -179,18 +176,7 @@ public class TerminalNodesOverlay extends DefaultItemizedOverlay{
         endNodeSet = true;
     }
 
-//    @Override
-//    public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-//        String str = canvas.toString();
-//        System.out.println(str);
-//        super.draw(canvas, mapView, shadow);
-//    }
-//    @Override
-//    public void clear() {
-//        super.clear();
-//        startNodeSet = false;
-//        endNodeSet = false;
-//    }
+
 
     public void removeNodes(){
         //removes all nodes but leaves markers
